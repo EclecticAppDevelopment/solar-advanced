@@ -23,7 +23,7 @@ import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.g3d.environment.*;
 
-public class MyGdxGame implements ApplicationListener
+public class solAdvanced implements ApplicationListener
 {
 	/** Based on...* See: http://blog.xoppa.com/basic-3d-using-libgdx-2 * @author Xoppa */
 	float dT;
