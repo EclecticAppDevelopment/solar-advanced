@@ -47,8 +47,8 @@ public class solAdvanced implements ApplicationListener
 		public ModelInstance i;
 	}
 	public Planet Sol, Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto;
-
 	public ArrayList<Planet> planets = new ArrayList<Planet>();
+	
 	@Override
 	public void create() {
 
@@ -222,7 +222,7 @@ public class solAdvanced implements ApplicationListener
 		planets.add(Uranus);
 		planets.add(Neptune);
 		planets.add(Pluto);
-		
+
 //		for (Planet a: planets){
 //			for (Planet b : planets){
 //			//	if a.y
@@ -256,7 +256,7 @@ public class solAdvanced implements ApplicationListener
 
 	@Override
 	public void render() {
-	//	dT = Gdx.graphics.getDeltaTime();
+		//	dT = Gdx.graphics.getDeltaTime();
 		camController.pinchZoomFactor = camFact;
 		camController.update();
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -264,6 +264,7 @@ public class solAdvanced implements ApplicationListener
 		DrawBodies();
 		cam.rotateAround(Vector3.Zero, new Vector3(1,1,1), 1f);
 		cam.update();
+		
 //		BodyTouch();
 		// Need to apply to all objects except Sol
 //		for (DirectionalLight light: environment.directionalLights){
@@ -307,16 +308,9 @@ public class solAdvanced implements ApplicationListener
 	public void dispose() {
 		modelBatch.dispose();
 		planets.clear();
-		Sol.m.dispose();
-		Mercury.m.dispose();
-		Venus.m.dispose();
-		Earth.m.dispose();
-		Mars.m.dispose();
-		Jupiter.m.dispose();
-		Saturn.m.dispose();
-		Uranus.m.dispose();
-		Neptune.m.dispose();
-		Pluto.m.dispose();
+		for (Planet a : planets){
+		    a.m.dispose();
+		}
 	}
 
 	@Override
