@@ -36,7 +36,7 @@ public class solAdvanced implements ApplicationListener
 //	public SpriteBatch sprite;
 //	public BitmapFont font;
 	public Color dirLights;
-	public float camFact;
+	public float camFact, rotFact;
 	public Vector3 touchPoint;
 //	public Matrix4 viewMatrix;
 
@@ -70,6 +70,7 @@ public class solAdvanced implements ApplicationListener
 		camPos = 10000f;
 		dirLights = new Color(Color.WHITE);
 		camFact = 500f;
+		rotFact = 10;
 		EnviroLights();
 		CameraSet();
 		cam.position.set(camPos, camPos, camPos);
@@ -185,7 +186,7 @@ public class solAdvanced implements ApplicationListener
 		Jupiter.x = 0;
 		Jupiter.y = -Jupiter.d;
 		Jupiter.z = 0;
-		Jupiter.o = (float) ((11.86 * 365.25) / 365.25);
+		Jupiter.o = (float) (11.86);
 		Jupiter.div = 80;
 		Jupiter.m = modelBuilder.createSphere(Jupiter.r, Jupiter.r, Jupiter.r, Jupiter.div, Jupiter.div,
 											  new Material(ColorAttribute.createDiffuse(Jupiter.c)),
@@ -200,7 +201,7 @@ public class solAdvanced implements ApplicationListener
 		Saturn.x = -Saturn.d;
 		Saturn.y = -Saturn.d;
 		Saturn.z = 0;
-		Saturn.o = (float) (1000.7 / 365.25);
+		Saturn.o = (float) (29.46);
 		Saturn.div = 80;
 		Saturn.m = modelBuilder.createSphere(Saturn.r, Saturn.r, Saturn.r, Saturn.div, Saturn.div,
 											 new Material(ColorAttribute.createDiffuse(Saturn.c)),
@@ -215,7 +216,7 @@ public class solAdvanced implements ApplicationListener
 		Uranus.x = -Uranus.d;
 		Uranus.y = 0;
 		Uranus.z = 0;
-		Uranus.o = (float) (224.7 / 365.25);
+		Uranus.o = (float) (164.79);
 		Uranus.div = 40;
 		Uranus.m = modelBuilder.createSphere(Uranus.r, Uranus.r, Uranus.r, Uranus.div, Uranus.div,
 											 new Material(ColorAttribute.createDiffuse(Uranus.c)),
@@ -230,7 +231,7 @@ public class solAdvanced implements ApplicationListener
 		Neptune.x = -Neptune.d;
 		Neptune.y = Neptune.d;
 		Neptune.z = 0;
-		Neptune.o = (float) (22.7 / 365.25);
+		Neptune.o = (float) (84.0);
 		Neptune.div = 40;
 		Neptune.m = modelBuilder.createSphere(Neptune.r, Neptune.r, Neptune.r, Neptune.div, Neptune.div,
 											  new Material(ColorAttribute.createDiffuse(Neptune.c)),
@@ -245,7 +246,7 @@ public class solAdvanced implements ApplicationListener
 		Pluto.x = 0;
 		Pluto.y = Pluto.d;
 		Pluto.z = 0;
-		Pluto.o = (float) (2240.7 / 365.25);
+		Pluto.o = (float) (248.54);
 		Pluto.div = 40;
 		Pluto.m = modelBuilder.createSphere(Pluto.r, Pluto.r, Pluto.r, Pluto.div, Pluto.div,
 											new Material(ColorAttribute.createDiffuse(Pluto.c)),
@@ -254,7 +255,7 @@ public class solAdvanced implements ApplicationListener
 		Pluto.i.transform.translate(Pluto.x, Pluto.y, Pluto.z);
 		//
 
-		}
+	}
 
 	public void EnviroLights(){
 		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.8f, 0.2f, 0.2f, 1f));
@@ -279,21 +280,21 @@ public class solAdvanced implements ApplicationListener
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 		DrawBodies();
-		angle++;
-		cam.rotateAround(Vector3.Zero, new Vector3(0,0,1), 2f);
-		cam.update();
+		angle = angle + (1 / rotFact);
+	//	cam.rotateAround(Vector3.Zero, new Vector3(0,0,1), 2f);
+	//	cam.update();
 	    angle = (float)Math.toRadians(angle); // Convert to radians
 		for (Planet a : planets){
 			if (a.r != Sol.r){
-				float newX = (float)Math.cos(angle) * (a.x - Sol.x) - (float)Math.sin(angle) * (a.y - Sol.y) + Sol.x;
-				float newY = (float)Math.sin(angle) * (a.x - Sol.x) + (float)Math.cos(angle) * (a.y - Sol.y) + Sol.y;
+				float newX = (float)Math.cos((1 / a.o) * angle) * (a.x - Sol.x) - (float)Math.sin((1 / a.o) * angle) * (a.y - Sol.y) + Sol.x;
+				float newY = (float)Math.sin((1 / a.o) * angle) * (a.x - Sol.x) + (float)Math.cos((1 / a.o) * angle) * (a.y - Sol.y) + Sol.y;
 				a.i = null;
 				a.i = new ModelInstance(a.m);
 				a.i.transform.translate(newX, newY, 0);
 		        a.x = newX;
         		a.y = newY;
 			}else{
-		    
+
 			}
 		}
 
@@ -347,7 +348,7 @@ public class solAdvanced implements ApplicationListener
 
 	@Override
 	public void resize(int width, int height) {
-	//	CameraSet();
+		//	CameraSet();
 		//cam = new PerspectiveCamera(50, cam.viewportHeight * (width / height), cam.viewportHeight);
 //		float aspectRatio = (float) width / (float) height;
 //		cam = new PerspectiveCamera(50, cam.viewportHeight * aspectRatio, cam.viewportHeight);
