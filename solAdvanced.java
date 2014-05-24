@@ -73,7 +73,7 @@ public class solAdvanced implements ApplicationListener
 		rotFact = 10;
 		EnviroLights();
 		CameraSet();
-		cam.position.set(camPos, camPos, camPos);
+		cam.position.set(0, 0, camPos);
 		cam.lookAt(0,0,0);
 		cam.near = 1f;
 		cam.far = 50000f;
@@ -139,7 +139,7 @@ public class solAdvanced implements ApplicationListener
 		Venus.r = 120f;
 		Venus.c = new Color(Color.MAGENTA);
 		Venus.x = Venus.d;
-		Venus.y = Venus.d;
+		Venus.y = 0;
 		Venus.z = 0;
 		Venus.o = (float) (224.7 / 365.25);
 		Venus.div = 40;
@@ -169,7 +169,7 @@ public class solAdvanced implements ApplicationListener
 		Mars.r = 70f;
 		Mars.c = new Color(Color.RED);
 		Mars.x = Mars.d;
-		Mars.y = -Mars.d;
+		Mars.y = 0;
 		Mars.z = 0;
 		Mars.o = (float) (686.98 / 365.25);
 		Mars.div = 40;
@@ -184,7 +184,7 @@ public class solAdvanced implements ApplicationListener
 		Jupiter.r = 1430f;
 		Jupiter.c = new Color(Color.RED);
 		Jupiter.x = 0;
-		Jupiter.y = -Jupiter.d;
+		Jupiter.y = Jupiter.d;
 		Jupiter.z = 0;
 		Jupiter.o = (float) (11.86);
 		Jupiter.div = 80;
@@ -198,8 +198,8 @@ public class solAdvanced implements ApplicationListener
 		Saturn.d = Sol.r + 10800f;
 		Saturn.r = 1200f;
 		Saturn.c = new Color(Color.LIGHT_GRAY);
-		Saturn.x = -Saturn.d;
-		Saturn.y = -Saturn.d;
+		Saturn.x = Saturn.d;
+		Saturn.y = 0;
 		Saturn.z = 0;
 		Saturn.o = (float) (29.46);
 		Saturn.div = 80;
@@ -213,7 +213,7 @@ public class solAdvanced implements ApplicationListener
 		Uranus.d = Sol.r + 15800f;
 		Uranus.r = 400f;
 		Uranus.c = new Color(Color.GREEN);
-		Uranus.x = -Uranus.d;
+		Uranus.x = Uranus.d;
 		Uranus.y = 0;
 		Uranus.z = 0;
 		Uranus.o = (float) (164.79);
@@ -228,7 +228,7 @@ public class solAdvanced implements ApplicationListener
 		Neptune.d = Sol.r + 25800f;
 		Neptune.r = 700f;
 		Neptune.c = new Color(Color.BLUE);
-		Neptune.x = -Neptune.d;
+		Neptune.x = 0;
 		Neptune.y = Neptune.d;
 		Neptune.z = 0;
 		Neptune.o = (float) (84.0);
@@ -281,8 +281,8 @@ public class solAdvanced implements ApplicationListener
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 		DrawBodies();
 		angle = angle + (1 / rotFact);
-	//	cam.rotateAround(Vector3.Zero, new Vector3(0,0,1), 2f);
-	//	cam.update();
+		//	cam.rotateAround(Vector3.Zero, new Vector3(0,0,1), 2f);
+		//	cam.update();
 	    angle = (float)Math.toRadians(angle); // Convert to radians
 		for (Planet a : planets){
 			if (a.r != Sol.r){
