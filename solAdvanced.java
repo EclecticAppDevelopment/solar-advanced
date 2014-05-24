@@ -172,7 +172,7 @@ public class solAdvanced implements ApplicationListener
 		Earth.i = new ModelInstance(Earth.m);
 		Earth.i.transform.translate(Earth.x, Earth.y, Earth.z);
 		//
-                Moon = new Planet();
+		Moon = new Planet();
 		Moon.d = Earth.r + 15f;
 		Moon.r = 13f;
 		Moon.c = new Color(Color.LIGHT_GRAY);
@@ -182,8 +182,8 @@ public class solAdvanced implements ApplicationListener
 		Moon.o = (float) (28.5 / 365.25);
 		Moon.div = 40;
 		Moon.m = modelBuilder.createSphere(Moon.r, Moon.r, Moon.r, Moon.div, Moon.div,
-											new Material(ColorAttribute.createDiffuse(Moon.c)),
-											Usage.Position | Usage.Normal);
+										   new Material(ColorAttribute.createDiffuse(Moon.c)),
+										   Usage.Position | Usage.Normal);
 		Moon.i = new ModelInstance(Moon.m);
 		Moon.i.transform.translate(Moon.x, Moon.y, Moon.z);
 		//
@@ -232,7 +232,7 @@ public class solAdvanced implements ApplicationListener
 		Saturn.i = new ModelInstance(Saturn.m);
 		Saturn.i.transform.translate(Saturn.x, Saturn.y, Saturn.z);
 		//
-                SatRings = new Planet();
+		SatRings = new Planet();
 		SatRings.d = Sol.r + 10800f;
 		SatRings.r = 2200f;
 		SatRings.c = new Color(Color.GRAY);
@@ -242,12 +242,12 @@ public class solAdvanced implements ApplicationListener
 		SatRings.o = (float) (29.46);
 		SatRings.div = 80;
 		SatRings.m = modelBuilder.createSphere(SatRings.r, SatRings.r, 2, SatRings.div, SatRings.div,
-											 new Material(ColorAttribute.createDiffuse(SatRings.c)),
-											 Usage.Position | Usage.Normal);
+											   new Material(ColorAttribute.createDiffuse(SatRings.c)),
+											   Usage.Position | Usage.Normal);
 		SatRings.i = new ModelInstance(SatRings.m);
 		SatRings.i.transform.translate(SatRings.x, SatRings.y, SatRings.z);
 		//		
-Uranus = new Planet();
+		Uranus = new Planet();
 		Uranus.d = Sol.r + 15800f;
 		Uranus.r = 400f;
 		Uranus.c = new Color(Color.GREEN);
@@ -314,6 +314,7 @@ Uranus = new Planet();
 	public void render() {
 		//	dT = Gdx.graphics.getDeltaTime();
 		camController.pinchZoomFactor = camFact;
+		camController.setMaxFlingDelay(20);
 		camController.update();
 		BodyTouch();
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -344,10 +345,10 @@ Uranus = new Planet();
 
 			}
 		}
-		}
+	}
 
-//		BodyTouch();
-		// Need to apply to all objects except Sol
+	
+	// Need to apply to all objects except Sol
 //		for (DirectionalLight light: environment.directionalLights){
 //			light.set(0.8f, 0.8f, 0.8f, (float)Math.sin(dT), (float)Math.cos(dT), -0.2f);
 //		}
@@ -356,10 +357,11 @@ Uranus = new Planet();
 	public void BodyTouch()
 	{
 		cam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
-
 		if (Gdx.input.isTouched()) {
 			for (Planet a : planets) {
-				if (pointInPlanet(a, touchPoint.x, touchPoint.y)) {
+				Vector3 V = new Vector3(a.x, a.y, a.r);
+				cam.unproject(V);
+				if (pointInPlanet(a, V, touchPoint.x, touchPoint.y)) {
 					a.c = Color.WHITE;
 					a.i = null;
 					a.i = new ModelInstance(a.m);
@@ -368,8 +370,8 @@ Uranus = new Planet();
     	}
 	}
 
-	public static boolean pointInPlanet (Planet p, float x, float y) {
-		return p.x <= x && p.x + p.r >= x && p.y <= y && p.y + p.r >= y;
+	public static boolean pointInPlanet (Planet p, Vector3 v, float x, float y) {
+		return v.x <= x && v.x + p.r >= x && v.y <= y && v.y + p.r >= y;
 	}
 
 	public void DrawBodies(){
