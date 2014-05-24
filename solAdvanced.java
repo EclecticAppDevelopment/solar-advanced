@@ -22,8 +22,8 @@ import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.g3d.environment.*;
-import android.renderscript.*;
 import java.util.*;
+import com.badlogic.gdx.audio.*;
 
 public class solAdvanced implements ApplicationListener
 {
@@ -39,6 +39,7 @@ public class solAdvanced implements ApplicationListener
 	public float camFact, rotFact;
 	public Vector3 touchPoint;
 //	public Matrix4 viewMatrix;
+	public Music bgMusic;
 
 	public class Planet{
 		public float x, y, z, r, d, o;
@@ -59,6 +60,11 @@ public class solAdvanced implements ApplicationListener
 		modelBatch = new ModelBatch();
 		// Builds each object
     	modelBuilder = new ModelBuilder();
+		bgMusic = Gdx.audio.newMusic(Gdx.files.internal("Eddies_Twister.mp3"));
+		bgMusic.play();
+		bgMusic.setLooping(true);
+
+		//  bgMusic = new Music(Gdx.files
 //		sprite = new SpriteBatch();
 //		font = new BitmapFont();
 //		viewMatrix = new Matrix4();
@@ -277,6 +283,7 @@ public class solAdvanced implements ApplicationListener
 		//	dT = Gdx.graphics.getDeltaTime();
 		camController.pinchZoomFactor = camFact;
 		camController.update();
+		BodyTouch();
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 		DrawBodies();
@@ -297,6 +304,7 @@ public class solAdvanced implements ApplicationListener
 
 			}
 		}
+		}
 
 //		BodyTouch();
 		// Need to apply to all objects except Sol
@@ -305,23 +313,19 @@ public class solAdvanced implements ApplicationListener
 //		}
 //	}
 //
-//	public void BodyTouch()
-//	{
-//		cam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
-//
-//		if (Gdx.input.justTouched()) {
-//			if (pointInPlanet(Sol, touchPoint.x, touchPoint.y)) {
-//				dirLights = Color.GREEN;
-//				EnviroLights();
-//			}
-////			if (pointInPlanet(Earth, touchPoint.x, touchPoint.y)) {
-//				dirLights = Color.RED;
-//				EnviroLights();
-//				}
-//				
-//			dirLights = Color.WHITE;
-//			EnviroLights();
-//		}
+	public void BodyTouch()
+	{
+		cam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
+
+		if (Gdx.input.isTouched()) {
+			for (Planet a : planets) {
+				if (pointInPlanet(a, touchPoint.x, touchPoint.y)) {
+					a.c = Color.WHITE;
+					a.i = null;
+					a.i = new ModelInstance(a.m);
+				}
+		    }
+    	}
 	}
 
 	public static boolean pointInPlanet (Planet p, float x, float y) {
@@ -344,6 +348,7 @@ public class solAdvanced implements ApplicationListener
 		for (Planet a : planets){
 		    a.m.dispose();
 		}
+		bgMusic.dispose();
 	}
 
 	@Override
@@ -360,9 +365,11 @@ public class solAdvanced implements ApplicationListener
 
 	@Override
 	public void pause() {
+		bgMusic.pause();
 	}
 
 	@Override
 	public void resume() {
+		bgMusic.play();
 	}
 }
