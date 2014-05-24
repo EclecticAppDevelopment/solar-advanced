@@ -48,7 +48,7 @@ public class solAdvanced implements ApplicationListener
 		public Model m;
 		public ModelInstance i;
 	}
-	public Planet Sol, Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto;
+	public Planet Sol, Mercury, Venus, Earth, Moon, Mars, Jupiter, Saturn, SatRings, Uranus, Neptune, Pluto;
 	public ArrayList<Planet> planets = new ArrayList<Planet>();
 
 	@Override
@@ -75,7 +75,7 @@ public class solAdvanced implements ApplicationListener
 		angle = 0;
 		camPos = 10000f;
 		dirLights = new Color(Color.WHITE);
-		camFact = 500f;
+		camFact = 5000f;
 		rotFact = 10;
 		EnviroLights();
 		CameraSet();
@@ -91,6 +91,8 @@ public class solAdvanced implements ApplicationListener
 		planets.add(Mercury);
 		planets.add(Venus);
 		planets.add(Earth);
+		planets.add(Moon);
+		planets.add(SatRings);
 		planets.add(Mars);
 		planets.add(Jupiter);
 		planets.add(Saturn);
@@ -170,6 +172,21 @@ public class solAdvanced implements ApplicationListener
 		Earth.i = new ModelInstance(Earth.m);
 		Earth.i.transform.translate(Earth.x, Earth.y, Earth.z);
 		//
+                Moon = new Planet();
+		Moon.d = Earth.r + 15f;
+		Moon.r = 13f;
+		Moon.c = new Color(Color.LIGHT_GRAY);
+		Moon.x = 0;
+		Moon.y = Earth.d + Moon.d;
+		Moon.z = 0;
+		Moon.o = (float) (28.5 / 365.25);
+		Moon.div = 40;
+		Moon.m = modelBuilder.createSphere(Moon.r, Moon.r, Moon.r, Moon.div, Moon.div,
+											new Material(ColorAttribute.createDiffuse(Moon.c)),
+											Usage.Position | Usage.Normal);
+		Moon.i = new ModelInstance(Moon.m);
+		Moon.i.transform.translate(Moon.x, Moon.y, Moon.z);
+		//
 		Mars = new Planet();
 		Mars.d = Sol.r + 2280f;
 		Mars.r = 70f;
@@ -215,7 +232,22 @@ public class solAdvanced implements ApplicationListener
 		Saturn.i = new ModelInstance(Saturn.m);
 		Saturn.i.transform.translate(Saturn.x, Saturn.y, Saturn.z);
 		//
-		Uranus = new Planet();
+                SatRings = new Planet();
+		SatRings.d = Sol.r + 10800f;
+		SatRings.r = 2200f;
+		SatRings.c = new Color(Color.GRAY);
+		SatRings.x = SatRings.d;
+		SatRings.y = 0;
+		SatRings.z = 0;
+		SatRings.o = (float) (29.46);
+		SatRings.div = 80;
+		SatRings.m = modelBuilder.createSphere(SatRings.r, SatRings.r, 2, SatRings.div, SatRings.div,
+											 new Material(ColorAttribute.createDiffuse(SatRings.c)),
+											 Usage.Position | Usage.Normal);
+		SatRings.i = new ModelInstance(SatRings.m);
+		SatRings.i.transform.translate(SatRings.x, SatRings.y, SatRings.z);
+		//		
+Uranus = new Planet();
 		Uranus.d = Sol.r + 15800f;
 		Uranus.r = 400f;
 		Uranus.c = new Color(Color.GREEN);
@@ -292,7 +324,15 @@ public class solAdvanced implements ApplicationListener
 		//	cam.update();
 	    angle = (float)Math.toRadians(angle); // Convert to radians
 		for (Planet a : planets){
-			if (a.r != Sol.r){
+			if (a == Moon){
+				float newX = (float)Math.cos((1 / a.o) * angle) * (a.x - Earth.x) - (float)Math.sin((1 / a.o) * angle) * (a.y - Earth.y) + Earth.x;
+				float newY = (float)Math.sin((1 / a.o) * angle) * (a.x - Earth.x) + (float)Math.cos((1 / a.o) * angle) * (a.y - Earth.y) + Earth.y;
+				a.i = null;
+				a.i = new ModelInstance(a.m);
+				a.i.transform.translate(newX, newY, 0);
+		        a.x = newX;
+        		a.y = newY;
+			}else if (a != Sol){
 				float newX = (float)Math.cos((1 / a.o) * angle) * (a.x - Sol.x) - (float)Math.sin((1 / a.o) * angle) * (a.y - Sol.y) + Sol.x;
 				float newY = (float)Math.sin((1 / a.o) * angle) * (a.x - Sol.x) + (float)Math.cos((1 / a.o) * angle) * (a.y - Sol.y) + Sol.y;
 				a.i = null;
