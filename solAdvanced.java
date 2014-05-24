@@ -22,18 +22,22 @@ import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.g3d.environment.*;
+import android.renderscript.*;
+import java.util.*;
 
 public class solAdvanced implements ApplicationListener
 {
 	float dT, camPos;
-
 	public Environment environment;
 	public PerspectiveCamera cam;
 	public CameraInputController camController;
 	public ModelBatch modelBatch;
+//	public SpriteBatch sprite;
+//	public BitmapFont font;
 	public Color dirLights;
 	public float camFact;
 	public Vector3 touchPoint;
+//	public Matrix4 viewMatrix;
 
 	public class Planet{
 		public float x, y, z, r, d;
@@ -44,7 +48,7 @@ public class solAdvanced implements ApplicationListener
 	}
 	public Planet Sol, Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto;
 
-
+	public ArrayList<Planet> planets = new ArrayList<Planet>();
 	@Override
 	public void create() {
 
@@ -54,11 +58,16 @@ public class solAdvanced implements ApplicationListener
 		modelBatch = new ModelBatch();
 		// Builds each object
 		ModelBuilder modelBuilder = new ModelBuilder();
+//		sprite = new SpriteBatch();
+//		font = new BitmapFont();
+//		viewMatrix = new Matrix4();
+//		viewMatrix.setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+//		sprite.setProjectionMatrix(viewMatrix);
 
 		dT = 0;
-		camPos = 2000f;
+		camPos = 10000f;
 		dirLights = new Color(Color.WHITE);
-		camFact = 250f;
+		camFact = 500f;
 		EnviroLights();
 		CameraSet();
     	touchPoint = new Vector3();
@@ -79,7 +88,7 @@ public class solAdvanced implements ApplicationListener
 		//
 		Mercury = new Planet();
 		Mercury.d = Sol.r + 580f;
-		Mercury.r = 5f;
+		Mercury.r = 50f;
 		Mercury.c = new Color(Color.LIGHT_GRAY);
 		Mercury.x = Mercury.d;
 		Mercury.y = 0;
@@ -93,25 +102,25 @@ public class solAdvanced implements ApplicationListener
 		//
 		Venus = new Planet();
 		Venus.d = Sol.r + 1080f;
-		Venus.r = 12f;
+		Venus.r = 120f;
 		Venus.c = new Color(Color.MAGENTA);
-		Venus.x = 0;
+		Venus.x = Venus.d;
 		Venus.y = Venus.d;
 		Venus.z = 0;
 		Venus.div = 40;
 		Venus.m = modelBuilder.createSphere(Venus.r, Venus.r, Venus.r, Venus.div, Venus.div,
-											  new Material(ColorAttribute.createDiffuse(Venus.c)),
-											  Usage.Position | Usage.Normal);
+											new Material(ColorAttribute.createDiffuse(Venus.c)),
+											Usage.Position | Usage.Normal);
 		Venus.i = new ModelInstance(Venus.m);
 		Venus.i.transform.translate(Venus.x, Venus.y, Venus.z);
 		//
 		Earth = new Planet();
 		Earth.d = Sol.r + 1500f;
-		Earth.r = 13f;
+		Earth.r = 130f;
 		Earth.c = new Color(Color.CYAN);
 		Earth.x = 0;
-		Earth.y = 0;
-		Earth.z = Earth.d;
+		Earth.y = Earth.d;
+		Earth.z = 0;
 		Earth.div = 40;
 		Earth.m = modelBuilder.createSphere(Earth.r, Earth.r, Earth.r, Earth.div, Earth.div,
 											new Material(ColorAttribute.createDiffuse(Earth.c)),
@@ -121,53 +130,53 @@ public class solAdvanced implements ApplicationListener
 		//
 		Mars = new Planet();
 		Mars.d = Sol.r + 2280f;
-		Mars.r = 7f;
+		Mars.r = 70f;
 		Mars.c = new Color(Color.RED);
 		Mars.x = Mars.d;
-		Mars.y = 0;
-		Mars.z = Mars.d;
+		Mars.y = -Mars.d;
+		Mars.z = 0;
 		Mars.div = 40;
 		Mars.m = modelBuilder.createSphere(Mars.r, Mars.r, Mars.r, Mars.div, Mars.div,
 										   new Material(ColorAttribute.createDiffuse(Mars.c)),
-											Usage.Position | Usage.Normal);
+										   Usage.Position | Usage.Normal);
 		Mars.i = new ModelInstance(Mars.m);
 		Mars.i.transform.translate(Mars.x, Mars.y, Mars.z);
 		//
 		Jupiter = new Planet();
 		Jupiter.d = Sol.r + 7780f;
-		Jupiter.r = 143f;
-		Jupiter.c = new Color(Color.GREEN.add(Color.BLUE));
-		Jupiter.x = Jupiter.d;
-		Jupiter.y = Jupiter.d;
+		Jupiter.r = 1430f;
+		Jupiter.c = new Color(Color.RED);
+		Jupiter.x = 0;
+		Jupiter.y = -Jupiter.d;
 		Jupiter.z = 0;
-		Jupiter.div = 40;
+		Jupiter.div = 80;
 		Jupiter.m = modelBuilder.createSphere(Jupiter.r, Jupiter.r, Jupiter.r, Jupiter.div, Jupiter.div,
 											  new Material(ColorAttribute.createDiffuse(Jupiter.c)),
-										   Usage.Position | Usage.Normal);
+											  Usage.Position | Usage.Normal);
 		Jupiter.i = new ModelInstance(Jupiter.m);
 		Jupiter.i.transform.translate(Jupiter.x, Jupiter.y, Jupiter.z);
 		//
 		Saturn = new Planet();
 		Saturn.d = Sol.r + 10800f;
-		Saturn.r = 120f;
-		Saturn.c = new Color(Color.YELLOW.add(Color.BLUE));
-		Saturn.x = Saturn.d;
-		Saturn.y = Saturn.d;
-		Saturn.z = Saturn.d;
-		Saturn.div = 40;
+		Saturn.r = 1200f;
+		Saturn.c = new Color(Color.LIGHT_GRAY);
+		Saturn.x = -Saturn.d;
+		Saturn.y = -Saturn.d;
+		Saturn.z = 0;
+		Saturn.div = 80;
 		Saturn.m = modelBuilder.createSphere(Saturn.r, Saturn.r, Saturn.r, Saturn.div, Saturn.div,
 											 new Material(ColorAttribute.createDiffuse(Saturn.c)),
-											  Usage.Position | Usage.Normal);
+											 Usage.Position | Usage.Normal);
 		Saturn.i = new ModelInstance(Saturn.m);
 		Saturn.i.transform.translate(Saturn.x, Saturn.y, Saturn.z);
 		//
 		Uranus = new Planet();
 		Uranus.d = Sol.r + 15800f;
-		Uranus.r = 40f;
-		Uranus.c = new Color(Color.BLUE);
-		Uranus.x = 0;
-		Uranus.y = Uranus.d;
-		Uranus.z = Uranus.d;
+		Uranus.r = 400f;
+		Uranus.c = new Color(Color.GREEN);
+		Uranus.x = -Uranus.d;
+		Uranus.y = 0;
+		Uranus.z = 0;
 		Uranus.div = 40;
 		Uranus.m = modelBuilder.createSphere(Uranus.r, Uranus.r, Uranus.r, Uranus.div, Uranus.div,
 											 new Material(ColorAttribute.createDiffuse(Uranus.c)),
@@ -177,32 +186,48 @@ public class solAdvanced implements ApplicationListener
 		//
 		Neptune = new Planet();
 		Neptune.d = Sol.r + 25800f;
-		Neptune.r = 70f;
-		Neptune.c = new Color(Color.GREEN);
-		Neptune.x = 0;
-		Neptune.y = 0;
-		Neptune.z = Neptune.d;
+		Neptune.r = 700f;
+		Neptune.c = new Color(Color.BLUE);
+		Neptune.x = -Neptune.d;
+		Neptune.y = Neptune.d;
+		Neptune.z = 0;
 		Neptune.div = 40;
 		Neptune.m = modelBuilder.createSphere(Neptune.r, Neptune.r, Neptune.r, Neptune.div, Neptune.div,
 											  new Material(ColorAttribute.createDiffuse(Neptune.c)),
-											 Usage.Position | Usage.Normal);
+											  Usage.Position | Usage.Normal);
 		Neptune.i = new ModelInstance(Neptune.m);
 		Neptune.i.transform.translate(Neptune.x, Neptune.y, Neptune.z);
 		//
 		Pluto = new Planet();
-		Pluto.d = Sol.r + 78800f;
-		Pluto.r = 3f;
-		Pluto.c = new Color(Color.GRAY);
-		Pluto.x = Pluto.d;
+		Pluto.d = Sol.r + 38800f;
+		Pluto.r = 30f;
+		Pluto.c = new Color(Color.LIGHT_GRAY);
+		Pluto.x = 0;
 		Pluto.y = Pluto.d;
-		Pluto.z = Pluto.d;
+		Pluto.z = 0;
 		Pluto.div = 40;
 		Pluto.m = modelBuilder.createSphere(Pluto.r, Pluto.r, Pluto.r, Pluto.div, Pluto.div,
 											new Material(ColorAttribute.createDiffuse(Pluto.c)),
-											 Usage.Position | Usage.Normal);
+											Usage.Position | Usage.Normal);
 		Pluto.i = new ModelInstance(Pluto.m);
 		Pluto.i.transform.translate(Pluto.x, Pluto.y, Pluto.z);
 		//
+		planets.add(Sol);
+		planets.add(Mercury);
+		planets.add(Venus);
+		planets.add(Earth);
+		planets.add(Mars);
+		planets.add(Jupiter);
+		planets.add(Saturn);
+		planets.add(Uranus);
+		planets.add(Neptune);
+		planets.add(Pluto);
+		
+//		for (Planet a: planets){
+//			for (Planet b : planets){
+//			//	if a.y
+//			}
+//		}
 
 		// Set control of camera to touch/pan/pinch
 		camController = new CameraInputController(cam);
@@ -224,68 +249,64 @@ public class solAdvanced implements ApplicationListener
 		cam = new PerspectiveCamera(50, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		cam.position.set(camPos, camPos, camPos);
 		cam.lookAt(0,0,0);
-		cam.near = 10f;
-		cam.far = 15000f;
+		cam.near = 1f;
+		cam.far = 50000f;
 		cam.update();
 	}
 
 	@Override
 	public void render() {
-		dT = Gdx.graphics.getDeltaTime();
+	//	dT = Gdx.graphics.getDeltaTime();
 		camController.pinchZoomFactor = camFact;
 		camController.update();
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-
 		DrawBodies();
-//		TimeElapse();
-
-		//   for (DirectionalLight light: environment.directionalLights){
-		//			light.set(0.8f, 0.8f, 0.8f, (float)Math.sin(dT), (float)Math.cos(dT), -0.2f);
-		//		}
-	}
-
-	public void TimeElapse()
-	{
-		cam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
-
-		if (Gdx.input.justTouched()) {
-			if (pointInPlanet(Sol, touchPoint.x, touchPoint.y)) {
-				dirLights = Color.GREEN;
-				EnviroLights();
-			}
-//			if (pointInPlanet(Earth, touchPoint.x, touchPoint.y)) {
+		cam.rotateAround(Vector3.Zero, new Vector3(1,1,1), 1f);
+		cam.update();
+//		BodyTouch();
+		// Need to apply to all objects except Sol
+//		for (DirectionalLight light: environment.directionalLights){
+//			light.set(0.8f, 0.8f, 0.8f, (float)Math.sin(dT), (float)Math.cos(dT), -0.2f);
+//		}
+//	}
+//
+//	public void BodyTouch()
+//	{
+//		cam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
+//
+//		if (Gdx.input.justTouched()) {
+//			if (pointInPlanet(Sol, touchPoint.x, touchPoint.y)) {
+//				dirLights = Color.GREEN;
+//				EnviroLights();
+//			}
+////			if (pointInPlanet(Earth, touchPoint.x, touchPoint.y)) {
 //				dirLights = Color.RED;
 //				EnviroLights();
 //				}
 //				
 //			dirLights = Color.WHITE;
 //			EnviroLights();
-		}
+//		}
 	}
 
 	public static boolean pointInPlanet (Planet p, float x, float y) {
 		return p.x <= x && p.x + p.r >= x && p.y <= y && p.y + p.r >= y;
 	}
-	
+
 	public void DrawBodies(){
 		modelBatch.begin(cam);
-		modelBatch.render(Sol.i, environment);
-		modelBatch.render(Mercury.i, environment);
-		modelBatch.render(Venus.i, environment);
-		modelBatch.render(Earth.i, environment);
-		modelBatch.render(Mars.i, environment);
-		modelBatch.render(Jupiter.i, environment);
-		modelBatch.render(Saturn.i, environment);
-		modelBatch.render(Neptune.i, environment);
-		modelBatch.render(Uranus.i, environment);
-		modelBatch.render(Pluto.i, environment);
+		for (Planet a : planets){
+			modelBatch.render(a.i, environment);}
 		modelBatch.end();
+
+
 	}
 
 	@Override
 	public void dispose() {
 		modelBatch.dispose();
+		planets.clear();
 		Sol.m.dispose();
 		Mercury.m.dispose();
 		Venus.m.dispose();
@@ -300,6 +321,12 @@ public class solAdvanced implements ApplicationListener
 
 	@Override
 	public void resize(int width, int height) {
+//		float aspectRatio = (float) width / (float) height;
+//		cam = new PerspectiveCamera(50, cam.viewportHeight * aspectRatio, cam.viewportHeight);
+////		viewMatrix = new Matrix4();
+//		viewMatrix.setToOrtho2D(0, 0, width, height);
+//		sprite.setProjectionMatrix(viewMatrix);
+
 	}
 
 	@Override
