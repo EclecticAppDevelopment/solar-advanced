@@ -25,10 +25,10 @@ import com.badlogic.gdx.graphics.g3d.environment.*;
 import java.util.*;
 import com.badlogic.gdx.audio.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import android.graphics.*;
 
 public class solAdvanced implements ApplicationListener
 {
-//	final solAdvanced context = this;
 	public float dT, camPos, angle;
 	public Environment environment;
 	public PerspectiveCamera cam;
@@ -38,6 +38,8 @@ public class solAdvanced implements ApplicationListener
 	public Color dirLights;
 	public float camFact, rotFact;
 	public Vector3 touchPoint;
+	
+	public float AstDmin, AstDmax;
 	
 //	public Button preP, nexP;
 	public SpriteBatch uiBatch;
@@ -57,14 +59,21 @@ public class solAdvanced implements ApplicationListener
 		public Model m;
 		public ModelInstance i;
 	}
+	public class Ast{
+		public float x, y, z, d;
+		public ModelInstance i;
+	}
 	public Planet Sol, Mercury, Venus, Earth, Moon, Mars, Asteroid, Jupiter, Saturn, SatRings, Uranus, Neptune, Pluto;
 	public ArrayList<Planet> planets = new ArrayList<Planet>();
+	public Ast asteroid;
 	public ArrayList<ModelInstance> asteroids = new ArrayList<ModelInstance>();
+	public int astCount;
 	
 	@Override
 	public void create() {
 
-		
+		// Multiples of 4 only
+		astCount = 64;
 		// Environment for lights
 		environment = new Environment();
 		// Model batch to draw all stars/planets
@@ -83,16 +92,16 @@ public class solAdvanced implements ApplicationListener
 
 		dT = 0;
 		angle = 0;
-		camPos = 20000f;
+		camPos = 5000f;
 		dirLights = new Color(Color.WHITE);
 		camFact = 5000f;
 		rotFact = 10;
 		EnviroLights();
 		CameraSet();
-		cam.position.set(0, 0, camPos);
+		cam.position.set(0, camPos, camPos);
 		cam.lookAt(0,0,0);
 		cam.near = 1f;
-		cam.far = 150000f;
+		cam.far = 500000f;
 		cam.update();
     	touchPoint = new Vector3();
 		
@@ -109,7 +118,7 @@ public class solAdvanced implements ApplicationListener
 		planets.add(Earth);
 		planets.add(Moon);
 		planets.add(Mars);
-	//	planets.add(Asteroid);
+//		planets.add(Asteroid);
 		planets.add(Jupiter);
 		planets.add(Saturn);
 		planets.add(SatRings);
@@ -205,7 +214,7 @@ public class solAdvanced implements ApplicationListener
 		Earth.i.transform.translate(Earth.x, Earth.y, Earth.z);
 		//
 		Moon = new Planet();
-		Moon.d = Earth.r + 15f;
+		Moon.d = Earth.r + 10f;
 		Moon.r = 13f;
 		Moon.c = new Color(Color.LIGHT_GRAY);
 		Moon.x = Earth.x;
@@ -234,44 +243,6 @@ public class solAdvanced implements ApplicationListener
 		Mars.i = new ModelInstance(Mars.m);
 		Mars.i.transform.translate(Mars.x, Mars.y, Mars.z);
 		//
-		Asteroid = new Planet();
-		Asteroid.d = Sol.r + 3280f;
-		Asteroid.r = 5f;
-		Asteroid.c = new Color(Color.GRAY);
-		Asteroid.x = 0;
-		Asteroid.y = 0;
-		Asteroid.z = 0;
-		Asteroid.o = (float) (706.98 / 365.25);
-		Asteroid.div = 20;
-		Asteroid.m = modelBuilder.createSphere(Asteroid.r, Asteroid.r, Asteroid.r, Asteroid.div, Asteroid.div,
-										   new Material(ColorAttribute.createDiffuse(Asteroid.c)),
-										   Usage.Position | Usage.Normal);
-//		for (int i = 0; i < 50; i++){
-//		    AstI = new ModelInstance(Asteroid.m);
-//			AstI.transform.translate(Asteroid.d + (float)(1000f * Math.random()), Asteroid.d + (float)(1000f * Math.random()), Asteroid.d + (float)(1000f * Math.random()));
-//			asteroids.add(AstI);
-//			AstI = new ModelInstance(Asteroid.m);
-//			AstI.transform.translate(Asteroid.d + (float)(-1000f * Math.random()), Asteroid.d + (float)(1000f * Math.random()), Asteroid.d + (float)(1000f * Math.random()));
-//			asteroids.add(AstI);
-//			AstI = new ModelInstance(Asteroid.m);
-//			AstI.transform.translate(Asteroid.d + (float)(-1000f * Math.random()), Asteroid.d + (float)(-1000f * Math.random()), Asteroid.d + (float)(1000f * Math.random()));
-//			asteroids.add(AstI);
-//			AstI = new ModelInstance(Asteroid.m);
-//			AstI.transform.translate(Asteroid.d + (float)(-1000f * Math.random()), Asteroid.d + (float)(-1000f * Math.random()), Asteroid.d + (float)(-1000f * Math.random()));
-//			asteroids.add(AstI);
-//			AstI = new ModelInstance(Asteroid.m);
-//			AstI.transform.translate(Asteroid.d + (float)(1000f * Math.random()), Asteroid.d + (float)(-1000f * Math.random()), Asteroid.d + (float)(-1000f * Math.random()));
-//			asteroids.add(AstI);
-//			AstI = new ModelInstance(Asteroid.m);
-//			AstI.transform.translate(Asteroid.d + (float)(-1000f * Math.random()), Asteroid.d + (float)(1000f * Math.random()), Asteroid.d + (float)(-1000f * Math.random()));
-//			asteroids.add(AstI);
-//			AstI = new ModelInstance(Asteroid.m);
-//			AstI.transform.translate(Asteroid.d + (float)(1000f * Math.random()), Asteroid.d + (float)(-1000f * Math.random()), Asteroid.d + (float)(1000f * Math.random()));
-//			asteroids.add(AstI);
-//		}
-//		Asteroid.i = new ModelInstance(Asteroid.m);
-//		Asteroid.i.transform.translate(Asteroid.x, Asteroid.y, Asteroid.z);
-		//
 		Jupiter = new Planet();
 		Jupiter.d = Sol.r + 7780f;
 		Jupiter.r = 1430f;
@@ -286,6 +257,57 @@ public class solAdvanced implements ApplicationListener
 											  Usage.Position | Usage.Normal);
 		Jupiter.i = new ModelInstance(Jupiter.m);
 		Jupiter.i.transform.translate(Jupiter.x, Jupiter.y, Jupiter.z);
+		//
+		Asteroid = new Planet();
+		Asteroid.r = 5f;
+		Asteroid.c = new Color(Color.GRAY);
+//		Asteroid.o = (float) (706.98 / 365.25);
+		Asteroid.div = 20;
+		Asteroid.m = modelBuilder.createSphere(Asteroid.r, Asteroid.r, Asteroid.r, Asteroid.div, Asteroid.div,
+										   new Material(ColorAttribute.createDiffuse(Asteroid.c)),
+										   Usage.Position | Usage.Normal);
+		AstDmin = Mars.d + 0.2f * (Jupiter.d - Mars.d);
+		AstDmin = Jupiter.d - 0.2f * (Jupiter.d - Mars.d);
+
+		for (int a = 0; a < astCount / 4; a++)
+		{
+			// +ve X, take +ve root for Y
+	    	asteroid = new Ast();
+		    asteroid.i = new ModelInstance(Asteroid.m);
+			asteroid.d = (float)(Math.random()*AstDmax) + AstDmin;
+			asteroid.x = (float)(Math.random()*asteroid.d);
+			asteroid.y = (float)Math.abs(Math.sqrt((asteroid.d * asteroid.d) - (asteroid.x * asteroid.x)));
+			asteroid.z = (float)(40* Math.random()) - 20;
+			asteroid.i.transform.translate(asteroid.x, asteroid.y, asteroid.z);
+			asteroids.add(asteroid.i);
+			// +ve X, take -ve root for Y
+	    	asteroid = new Ast();
+		    asteroid.i = new ModelInstance(Asteroid.m);
+			asteroid.d = (float)(Math.random()*AstDmax) + AstDmin;
+			asteroid.x = (float)(Math.random()*asteroid.d);
+			asteroid.y = (float)-Math.abs(Math.sqrt((asteroid.d * asteroid.d) - (asteroid.x * asteroid.x)));
+			asteroid.z = (float)(40* Math.random()) - 20;
+			asteroid.i.transform.translate(asteroid.x, asteroid.y, asteroid.z);
+			asteroids.add(asteroid.i);
+			// -ve X, take +ve root for Y
+	    	asteroid = new Ast();
+		    asteroid.i = new ModelInstance(Asteroid.m);
+			asteroid.d = (float)(Math.random()*AstDmax) + AstDmin;
+			asteroid.x = (float)-(Math.random()*asteroid.d);
+			asteroid.y = (float)Math.abs(Math.sqrt((asteroid.d * asteroid.d) - (asteroid.x * asteroid.x)));
+			asteroid.z = (float)(40* Math.random()) - 20;
+			asteroid.i.transform.translate(asteroid.x, asteroid.y, asteroid.z);
+			asteroids.add(asteroid.i);
+			// -ve X, take -ve root for Y
+	    	asteroid = new Ast();
+		    asteroid.i = new ModelInstance(Asteroid.m);
+			asteroid.d = (float)(Math.random()*AstDmax) + AstDmin;
+			asteroid.x = (float)-(Math.random()*asteroid.d);
+			asteroid.y = (float)-Math.abs(Math.sqrt((asteroid.d * asteroid.d) - (asteroid.x * asteroid.x)));
+			asteroid.z = (float)(40* Math.random()) - 20;
+			asteroid.i.transform.translate(asteroid.x, asteroid.y, asteroid.z);
+			asteroids.add(asteroid.i);
+		}
 		//
 		Saturn = new Planet();
 		Saturn.d = Sol.r + 10800f;
@@ -348,7 +370,7 @@ public class solAdvanced implements ApplicationListener
 		Neptune.i.transform.translate(Neptune.x, Neptune.y, Neptune.z);
 		//
 		Pluto = new Planet();
-		Pluto.d = Sol.r + 38800f;
+		Pluto.d = Sol.r + 30000f;
 		Pluto.r = 30f;
 		Pluto.c = new Color(Color.LIGHT_GRAY);
 		Pluto.x = 0;
@@ -369,16 +391,19 @@ public class solAdvanced implements ApplicationListener
 		
 		dT = Gdx.graphics.getDeltaTime();
 		camController.pinchZoomFactor = camFact;
-		camController.alwaysScroll = true;
+	//	camController.alwaysScroll = true;
 	//	camController.setMaxFlingDelay(20);
 		camController.update();
-		uiDraw();
-		uiTouch();
-	//	BodyTouch();
+//		uiDraw();//		uiTouch();//     	BodyTouch();
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+		cam.lookAt(planets.get(selP).x, planets.get(selP).y, planets.get(selP).z);
+		cam.update();
+		NextPlanet();
 		DrawBodies();
-		angle = angle + (1 / rotFact);
+		Orbit();
+		
+		
 //			cam.rotateAround(Vector3.Zero, new Vector3(0,0,1), 2f);
 //			cam.update();
 ////	        	// Need to apply to all objects except Sol
@@ -386,7 +411,29 @@ public class solAdvanced implements ApplicationListener
 //        			light.set(0.8f, 0.8f, 0.8f, (float)Math.sin(dT), (float)Math.cos(dT), -0.2f);
 //        		}
         	
-	    angle = (float)Math.toRadians(angle);
+	//RenderEnd   
+	}
+
+	private void NextPlanet()
+	{
+		if (Gdx.input.isTouched(0) && Gdx.input.isTouched(1) && Gdx.input.isTouched(2)){
+			if (planets.get(selP) == Pluto){
+				selP = 0;
+			}else if(planets.get(selP) == SatRings){
+				selP = selP + 2;
+			}
+			else{
+				selP = selP + 1;
+			}
+			cam.position.set(planets.get(selP).x, planets.get(selP).y + camPos, planets.get(selP).z + camPos);
+		}
+	// NextPlanetEnd
+	}
+
+	private void Orbit()
+	{
+		angle = angle + (1 / rotFact);
+		angle = (float)Math.toRadians(angle);
 		for (Planet a : planets){
 			if (a == Moon){
 				float newX = (float)Math.cos((1 / a.o) * angle) * (a.x - Earth.x) - (float)Math.sin((1 / a.o) * angle) * (a.y - Earth.y) + Earth.x;
@@ -416,75 +463,10 @@ public class solAdvanced implements ApplicationListener
 
 			}
 		}
+	//OrbitEnd
 	}
 
-	private void uiTouch()
-	{
-	//	uiBatch.begin();
-	//	uiBatch.draw(preP, 0, 0, 100, 100);
-		// TODO: Implement this method
-	}
-
-	private void uiDraw()
-	{
-		// TODO: Implement this method
-	}
-
-	public void BodyTouch()
-	{
-		touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-	//	cam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
-		if (Gdx.input.isTouched()) {
-		//	Toast.makeText(context, "Button is clicked", Toast.LENGTH_LONG).show();
-//			for (Planet a : planets) {
-////				Vector3 V = new Vector3(a.x, a.y, a.r);
-//				if (touchDown(a, touchPoint.x, touchPoint.y)){
-//					cam.lookAt(a.x, a.y, a.z);
-//					cam.update();
-////					a.c = Color.WHITE;
-////					a.i = null;
-////					a.i = new ModelInstance(a.m);
-//				}
-////				cam.unproject(V);
-////				if (pointInPlanet(a, V, touchPoint.x, touchPoint.y)) {
-////					a.c = Color.WHITE;
-////					a.i = null;
-////					a.i = new ModelInstance(a.m);
-//				}
-//		    }
-    	}
-	}
 	
-//	@Override
-//	public void toast(String text, boolean isLong) {
-//		toast(text, isLong, this);
-//	}
-
-//	public void toast(final String text, final boolean isLong,
-//					  final solAdvanced context) {
-//	//	handler.post(new Runnable() {
-////				@Override
-//				public void run() {
-//					final Toast tst = new Toast(context);
-//					LinearLayout toastLayout = new LinearLayout(context);
-//					toastLayout.setBackgroundColor(Color.toIntBits(20, 20, 20, 255));
-//					toastLayout.setPadding(10, 10, 10, 10);
-//					TextView toastView = new TextView(context);
-//					toastView.setText(text);
-//					toastView.setTextSize(24);
-//					toastView.setGravity(Gravity.CENTER);
-//					toastLayout.addView(toastView);
-//					tst.setView(toastLayout);
-//					tst.setDuration(isLong ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
-//					tst.show();
-//				}
-//			});
-//	}
-
-	public static boolean pointInPlanet (Planet p, Vector3 v, float x, float y) {
-		return v.x <= x && v.x + p.r >= x && v.y <= y && v.y + p.r >= y;
-	}
-
 	public void DrawBodies(){
 		modelBatch.begin(cam);
 		for (Planet a : planets){
@@ -495,34 +477,17 @@ public class solAdvanced implements ApplicationListener
 	}
 
 	@Override
-    public boolean touchDown (Planet p, float x, float y) {
-          Vector3 touchDown = new Vector3(x, y, 0);
-          cam.unproject(touchDown);
-          Vector3 obPos = new Vector3(p.x, p.y, p.z);
-          obPos.sub(touchDown);
-    return true;
-    }
-   
-	@Override
 	public void dispose() {
 		modelBatch.dispose();
 		planets.clear();
 		for (Planet a : planets){
-		    a.m.dispose();
-		}
+		    a.m.dispose();}
+		
 		bgMusic.dispose();
 	}
 
 	@Override
 	public void resize(int width, int height) {
-		//	CameraSet();
-		//cam = new PerspectiveCamera(50, cam.viewportHeight * (width / height), cam.viewportHeight);
-//		float aspectRatio = (float) width / (float) height;
-//		cam = new PerspectiveCamera(50, cam.viewportHeight * aspectRatio, cam.viewportHeight);
-////		viewMatrix = new Matrix4();
-//		viewMatrix.setToOrtho2D(0, 0, width, height);
-//		sprite.setProjectionMatrix(viewMatrix);
-
 	}
 
 	@Override
@@ -535,3 +500,52 @@ public class solAdvanced implements ApplicationListener
 		bgMusic.play();
 	}
 }
+//	private void uiTouch()
+//	{
+//		//	uiBatch.begin();
+//		//	uiBatch.draw(preP, 0, 0, 100, 100);
+//		// TODO: Implement this method
+//	}
+//
+//	private void uiDraw()
+//	{
+//		// TODO: Implement this method
+//	}
+//
+//	public void BodyTouch()
+//	{
+//		touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+//		//	cam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
+//		if (Gdx.input.isTouched()) {
+//			//	Toast.makeText(context, "Button is clicked", Toast.LENGTH_LONG).show();
+////			for (Planet a : planets) {
+//////				Vector3 V = new Vector3(a.x, a.y, a.r);
+////				if (touchDown(a, touchPoint.x, touchPoint.y)){
+////					cam.lookAt(a.x, a.y, a.z);
+////					cam.update();
+//////					a.c = Color.WHITE;
+//////					a.i = null;
+//////					a.i = new ModelInstance(a.m);
+////				}
+//////				cam.unproject(V);
+//////				if (pointInPlanet(a, V, touchPoint.x, touchPoint.y)) {
+//////					a.c = Color.WHITE;
+//////					a.i = null;
+//////					a.i = new ModelInstance(a.m);
+////				}
+////		    }
+//    	}
+//	}
+//
+//	public static boolean pointInPlanet (Planet p, Vector3 v, float x, float y) {
+//		return v.x <= x && v.x + p.r >= x && v.y <= y && v.y + p.r >= y;
+//	}
+//	@Override
+//    public boolean touchDown (Planet p, float x, float y) {
+//		Vector3 touchDown = new Vector3(x, y, 0);
+//		cam.unproject(touchDown);
+//		Vector3 obPos = new Vector3(p.x, p.y, p.z);
+//		obPos.sub(touchDown);
+//		return true;
+//    }
+//   
