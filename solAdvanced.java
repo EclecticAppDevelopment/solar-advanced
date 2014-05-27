@@ -38,17 +38,9 @@ public class solAdvanced implements ApplicationListener
 	public Color dirLights;
 	public float camFact, rotFact;
 	public Vector3 touchPoint;
-	
 	public float AstDmin, AstDmax;
-	
-//	public Button preP, nexP;
-	public SpriteBatch uiBatch;
-	public int selP, i;
+	public int selP;
 	public ModelInstance AstI;
-	
-//	public SpriteBatch sprite;
-//	public BitmapFont font;
-//	public Matrix4 viewMatrix;
 	public Music bgMusic;
 
 	public class Planet{
@@ -72,7 +64,7 @@ public class solAdvanced implements ApplicationListener
 	@Override
 	public void create() {
 
-		// Multiples of 4 only
+		// Multiples of 4 only - keep under 100 asteroids
 		astCount = 64;
 		// Environment for lights
 		environment = new Environment();
@@ -83,13 +75,6 @@ public class solAdvanced implements ApplicationListener
 		bgMusic = Gdx.audio.newMusic(Gdx.files.internal("Eddies_Twister.mp3"));
 		bgMusic.play();
 		bgMusic.setLooping(true);
-
-//		sprite = new SpriteBatch();
-//		font = new BitmapFont();
-//		viewMatrix = new Matrix4();
-//		viewMatrix.setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-//		sprite.setProjectionMatrix(viewMatrix);
-
 		dT = 0;
 		angle = 0;
 		camPos = 5000f;
@@ -104,10 +89,6 @@ public class solAdvanced implements ApplicationListener
 		cam.far = 500000f;
 		cam.update();
     	touchPoint = new Vector3();
-		
-//		preP = new Button();
-//		nexP = new Button();
-		uiBatch = new SpriteBatch();
 		selP = 0; /* Sol */
 		
 		//
@@ -118,7 +99,6 @@ public class solAdvanced implements ApplicationListener
 		planets.add(Earth);
 		planets.add(Moon);
 		planets.add(Mars);
-//		planets.add(Asteroid);
 		planets.add(Jupiter);
 		planets.add(Saturn);
 		planets.add(SatRings);
@@ -133,12 +113,6 @@ public class solAdvanced implements ApplicationListener
 	
 	public void EnviroLights(){
 		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.8f, 0.2f, 0.2f, 1f));
-//		environment.add(new PointLight().set(dirLights, -1f, 0, 0, 1f));
-//		environment.add(new PointLight().set(dirLights, 1f, 0, 0, 1));
-//		environment.add(new PointLight().set(dirLights, 0, -1f, 0, 1));
-//		environment.add(new PointLight().set(dirLights, 0, 1f, 0, 1));
-//		environment.add(new PointLight().set(dirLights, 0, 0, 1f, 1));
-//		environment.add(new PointLight().set(dirLights, 0, 0, -1f, 1));
 		environment.add(new DirectionalLight().set(dirLights, -1f, 0, 0));
 		environment.add(new DirectionalLight().set(dirLights, 1f, 0, 0));
 		environment.add(new DirectionalLight().set(dirLights, 0, -1f, 0));
@@ -261,7 +235,6 @@ public class solAdvanced implements ApplicationListener
 		Asteroid = new Planet();
 		Asteroid.r = 5f;
 		Asteroid.c = new Color(Color.GRAY);
-//		Asteroid.o = (float) (706.98 / 365.25);
 		Asteroid.div = 20;
 		Asteroid.m = modelBuilder.createSphere(Asteroid.r, Asteroid.r, Asteroid.r, Asteroid.div, Asteroid.div,
 										   new Material(ColorAttribute.createDiffuse(Asteroid.c)),
@@ -391,10 +364,7 @@ public class solAdvanced implements ApplicationListener
 		
 		dT = Gdx.graphics.getDeltaTime();
 		camController.pinchZoomFactor = camFact;
-	//	camController.alwaysScroll = true;
-	//	camController.setMaxFlingDelay(20);
 		camController.update();
-//		uiDraw();//		uiTouch();//     	BodyTouch();
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 		cam.lookAt(planets.get(selP).x, planets.get(selP).y, planets.get(selP).z);
@@ -402,21 +372,12 @@ public class solAdvanced implements ApplicationListener
 		NextPlanet();
 		DrawBodies();
 		Orbit();
-		
-		
-//			cam.rotateAround(Vector3.Zero, new Vector3(0,0,1), 2f);
-//			cam.update();
-////	        	// Need to apply to all objects except Sol
-//        		for (DirectionalLight light: environment.directionalLights){
-//        			light.set(0.8f, 0.8f, 0.8f, (float)Math.sin(dT), (float)Math.cos(dT), -0.2f);
-//        		}
-        	
 	//RenderEnd   
 	}
 
 	private void NextPlanet()
 	{
-		if (Gdx.input.isTouched(0) && Gdx.input.isTouched(1) && Gdx.input.isTouched(2)){
+		if (Gdx.input.isTouched(0) && Gdx.input.isTouched(1) && Gdx.input.isTouched(2) && Gdx.input.justTouched()){
 			if (planets.get(selP) == Pluto){
 				selP = 0;
 			}else if(planets.get(selP) == SatRings){
@@ -459,13 +420,10 @@ public class solAdvanced implements ApplicationListener
 				}
 				a.x = newX;
         		a.y = newY;
-			}else{
-
-			}
+			}else{}
 		}
 	//OrbitEnd
 	}
-
 	
 	public void DrawBodies(){
 		modelBatch.begin(cam);
@@ -500,52 +458,3 @@ public class solAdvanced implements ApplicationListener
 		bgMusic.play();
 	}
 }
-//	private void uiTouch()
-//	{
-//		//	uiBatch.begin();
-//		//	uiBatch.draw(preP, 0, 0, 100, 100);
-//		// TODO: Implement this method
-//	}
-//
-//	private void uiDraw()
-//	{
-//		// TODO: Implement this method
-//	}
-//
-//	public void BodyTouch()
-//	{
-//		touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-//		//	cam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
-//		if (Gdx.input.isTouched()) {
-//			//	Toast.makeText(context, "Button is clicked", Toast.LENGTH_LONG).show();
-////			for (Planet a : planets) {
-//////				Vector3 V = new Vector3(a.x, a.y, a.r);
-////				if (touchDown(a, touchPoint.x, touchPoint.y)){
-////					cam.lookAt(a.x, a.y, a.z);
-////					cam.update();
-//////					a.c = Color.WHITE;
-//////					a.i = null;
-//////					a.i = new ModelInstance(a.m);
-////				}
-//////				cam.unproject(V);
-//////				if (pointInPlanet(a, V, touchPoint.x, touchPoint.y)) {
-//////					a.c = Color.WHITE;
-//////					a.i = null;
-//////					a.i = new ModelInstance(a.m);
-////				}
-////		    }
-//    	}
-//	}
-//
-//	public static boolean pointInPlanet (Planet p, Vector3 v, float x, float y) {
-//		return v.x <= x && v.x + p.r >= x && v.y <= y && v.y + p.r >= y;
-//	}
-//	@Override
-//    public boolean touchDown (Planet p, float x, float y) {
-//		Vector3 touchDown = new Vector3(x, y, 0);
-//		cam.unproject(touchDown);
-//		Vector3 obPos = new Vector3(p.x, p.y, p.z);
-//		obPos.sub(touchDown);
-//		return true;
-//    }
-//   
