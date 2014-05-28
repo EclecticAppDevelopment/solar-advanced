@@ -41,7 +41,7 @@ public class solAdvanced implements ApplicationListener
 	public Color dirLights;
 	public float camFact, rotFact;
 	public Vector3 touchPoint;
-	public float AstDmin, AstDmax;
+	public float AstDmin, AstDmax, fontX, fontY;
 	public int selP;
 	public ModelInstance AstI;
 	public Music bgMusic;
@@ -64,9 +64,28 @@ public class solAdvanced implements ApplicationListener
 	public ArrayList<ModelInstance> asteroids = new ArrayList<ModelInstance>();
 	public int astCount;
 	
+	public SpriteBatch spriteBatch;
+	public BitmapFont font;
+	CharSequence str, strN, strD, strR, strO, strX, strY, strZ;
+	
 	@Override
 	public void create() {
 
+		strN = "Focus: Sol"  + "\n" ;
+		strD = "Mean Orbital Distance: 0 km"  + "\n" ;
+		strR = "Radius: 1391000 km"  + "\n" ;
+		strO = "Orbit Time: 0 days"  + "\n" ;
+		strX = "X-Position: 0"  + "\n" ;
+		strY = "Y-Position: 0"  + "\n" ;
+		strZ = "Z-Position: 0"  + "\n" ;
+		str = strN + "" + strD  + "" + strR  + "" + strO + "" + strX + "" + strY  + "" + strZ;
+		
+		spriteBatch = new SpriteBatch();
+		font = new BitmapFont();
+		font.setColor(Color.YELLOW);
+		fontX = Gdx.graphics.getWidth() - (Gdx.graphics.getWidth() / 5);
+		fontY = Gdx.graphics.getHeight() - (Gdx.graphics.getHeight() / 25);
+		
 		// Multiples of 4 only - keep under 100 asteroids
 		astCount = 64;
 		// Environment for lights
@@ -75,6 +94,7 @@ public class solAdvanced implements ApplicationListener
 		modelBatch = new ModelBatch();
 		// Builds each object
     	modelBuilder = new ModelBuilder();
+		
 		bgMusic = Gdx.audio.newMusic(Gdx.files.internal("Eddies_Twister.mp3"));
 		bgMusic.play();
 		bgMusic.setLooping(true);
@@ -135,6 +155,7 @@ public class solAdvanced implements ApplicationListener
 		Sol.x = 0;
 		Sol.y = 0;
 		Sol.z = 0;
+		Sol.o = 0;
 		Sol.div = 80;
 		Sol.c = new Color(Color.ORANGE.add(Color.YELLOW));
 		Sol.r = 1391.1f;
@@ -147,7 +168,7 @@ public class solAdvanced implements ApplicationListener
 		Mercury = new Planet();
 		Mercury.name = "Mercury";
 		Mercury.d = Sol.r + 580f;
-		Mercury.r = 50f;
+		Mercury.r = 48.8f;
 		Mercury.c = new Color(Color.LIGHT_GRAY);
 		Mercury.x = Mercury.d;
 		Mercury.y = 0;
@@ -161,8 +182,9 @@ public class solAdvanced implements ApplicationListener
 		Mercury.i.transform.translate(Mercury.x, Mercury.y, Mercury.z);
 		//
 		Venus = new Planet();
+		Venus.name = "Venus";
 		Venus.d = Sol.r + 1080f;
-		Venus.r = 120f;
+		Venus.r = 121f;
 		Venus.c = new Color(Color.MAGENTA);
 		Venus.x = Venus.d;
 		Venus.y = 0;
@@ -176,6 +198,7 @@ public class solAdvanced implements ApplicationListener
 		Venus.i.transform.translate(Venus.x, Venus.y, Venus.z);
 		//
 		Earth = new Planet();
+		Earth.name = "Earth";
 		Earth.d = Sol.r + 1500f;
 		Earth.r = 130f;
 		Earth.c = new Color(Color.CYAN);
@@ -191,6 +214,7 @@ public class solAdvanced implements ApplicationListener
 		Earth.i.transform.translate(Earth.x, Earth.y, Earth.z);
 		//
 		Moon = new Planet();
+		Moon.name = "Earth's Moon";
 		Moon.d = Earth.r + 10f;
 		Moon.r = 13f;
 		Moon.c = new Color(Color.LIGHT_GRAY);
@@ -206,6 +230,7 @@ public class solAdvanced implements ApplicationListener
 		Moon.i.transform.translate(Moon.x, Moon.y, Moon.z);
 		//
 		Mars = new Planet();
+		Mars.name = "Mars";
 		Mars.d = Sol.r + 2280f;
 		Mars.r = 70f;
 		Mars.c = new Color(Color.RED);
@@ -221,6 +246,7 @@ public class solAdvanced implements ApplicationListener
 		Mars.i.transform.translate(Mars.x, Mars.y, Mars.z);
 		//
 		Jupiter = new Planet();
+		Jupiter.name = "Jupiter";
 		Jupiter.d = Sol.r + 7780f;
 		Jupiter.r = 1430f;
 		Jupiter.c = new Color(1, 0.3f, 0.3f, 0.3f);
@@ -236,6 +262,7 @@ public class solAdvanced implements ApplicationListener
 		Jupiter.i.transform.translate(Jupiter.x, Jupiter.y, Jupiter.z);
 		//
 		Asteroid = new Planet();
+		Asteroid.name = "Asteroid";
 		Asteroid.r = 5f;
 		Asteroid.c = new Color(Color.GRAY);
 		Asteroid.div = 20;
@@ -286,6 +313,7 @@ public class solAdvanced implements ApplicationListener
 		}
 		//
 		Saturn = new Planet();
+		Saturn.name = "Saturn";
 		Saturn.d = Sol.r + 10800f;
 		Saturn.r = 1200f;
 		Saturn.c = new Color(Color.LIGHT_GRAY);
@@ -301,6 +329,7 @@ public class solAdvanced implements ApplicationListener
 		Saturn.i.transform.translate(Saturn.x, Saturn.y, Saturn.z);
 		//
 		SatRings = new Planet();
+		SatRings.name = "Saturn's Rings";
 		SatRings.d = Sol.r + 10800f;
 		SatRings.r = 2200f;
 		SatRings.c = new Color(Color.GRAY);
@@ -316,6 +345,7 @@ public class solAdvanced implements ApplicationListener
 		SatRings.i.transform.translate(SatRings.x, SatRings.y, SatRings.z);
 		//		
 		Uranus = new Planet();
+		Uranus.name = "Uranus";
 		Uranus.d = Sol.r + 15800f;
 		Uranus.r = 400f;
 		Uranus.c = new Color(Color.GREEN);
@@ -331,7 +361,8 @@ public class solAdvanced implements ApplicationListener
 		Uranus.i.transform.translate(Uranus.x, Uranus.y, Uranus.z);
 		//
 		Neptune = new Planet();
-		Neptune.d = Sol.r + 25800f;
+		Neptune.name = "Neptune";
+		Neptune.d = Sol.r + 45043f;
 		Neptune.r = 700f;
 		Neptune.c = new Color(Color.BLUE);
 		Neptune.x = 0;
@@ -346,6 +377,7 @@ public class solAdvanced implements ApplicationListener
 		Neptune.i.transform.translate(Neptune.x, Neptune.y, Neptune.z);
 		//
 		Pluto = new Planet();
+		Pluto.name = "Pluto";
 		Pluto.d = Sol.r + 30000f;
 		Pluto.r = 30f;
 		Pluto.c = new Color(Color.LIGHT_GRAY);
@@ -375,12 +407,30 @@ public class solAdvanced implements ApplicationListener
 		NextPlanet();
 		DrawBodies();
 		Orbit();
+		strX = "X-Position: " + planets.get(selP).x + "\n";
+		strY = "Y-Position: " + planets.get(selP).y + "\n";
+		strZ = "Z-Position: " + planets.get(selP).z + "\n";
+		str = strN +""+ strD  +""+ strR +""+ strO +""+strX +""+ strY +""+strZ;
+
+		spriteBatch.begin();
+		//font.draw(spriteBatch, str, fontX, fontY);
+		font.drawMultiLine(spriteBatch, str, fontX, fontY);
+		spriteBatch.end();
+		
 	//RenderEnd   
 	}
 
 	private void NextPlanet()
 	{
 		if (Gdx.input.isTouched(0) && Gdx.input.isTouched(1) && Gdx.input.isTouched(2) && Gdx.input.justTouched()){
+			strN = "Focus: ";
+			strD = "Mean Orbital Distance: ";
+			strR = "Radius: ";
+			strO = "Orbit Time: ";
+			strX = "X-Position: ";
+			strY = "Y-Position: ";
+			strZ = "Z-Position: ";
+			
 			if (planets.get(selP) == Pluto){
 				selP = 0;
 			}else if(planets.get(selP) == Saturn){
@@ -389,6 +439,15 @@ public class solAdvanced implements ApplicationListener
 			else{
 				selP = selP + 1;
 			}
+			strN += planets.get(selP).name + "\n";
+			strD += Math.round( planets.get(selP).d )+ "00000 km" + "\n";
+			strR += 100 * planets.get(selP).r + " km" + "\n";
+			strO += Math.round( 365.25 * planets.get(selP).o )+ " days" + "\n";
+			strX += planets.get(selP).x + "\n";
+			strY += planets.get(selP).y + "\n";
+			strZ += planets.get(selP).z + "\n";
+			str = strN +""+ strD  +""+ strR +""+ strO +""+strX +""+ strY +""+strZ;
+			font.setColor(planets.get(selP).c);
 			cam.position.set(planets.get(selP).x, planets.get(selP).y + camPos, planets.get(selP).z + camPos);
 		}
 	// NextPlanetEnd
