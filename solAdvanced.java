@@ -1,5 +1,8 @@
 package com.eclecticapps.soladvanced;
 
+// Design & copyright - Matthew Tiernan
+// Eclectic App Development - May 2014
+
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
@@ -220,7 +223,7 @@ public class solAdvanced implements ApplicationListener
 		Jupiter = new Planet();
 		Jupiter.d = Sol.r + 7780f;
 		Jupiter.r = 1430f;
-		Jupiter.c = new Color(Color.RED);
+		Jupiter.c = new Color(1, 0.3f, 0.3f, 0.3f);
 		Jupiter.x = 0;
 		Jupiter.y = Jupiter.d;
 		Jupiter.z = 0;
@@ -380,7 +383,7 @@ public class solAdvanced implements ApplicationListener
 		if (Gdx.input.isTouched(0) && Gdx.input.isTouched(1) && Gdx.input.isTouched(2) && Gdx.input.justTouched()){
 			if (planets.get(selP) == Pluto){
 				selP = 0;
-			}else if(planets.get(selP) == SatRings){
+			}else if(planets.get(selP) == Saturn){
 				selP = selP + 2;
 			}
 			else{
