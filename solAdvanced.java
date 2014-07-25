@@ -1,6 +1,11 @@
 package com.eclecticapps.soladvanced;
 
 // Design & copyright - Matthew Tiernan
+// The code is available for amendment or adaption for other projects.
+// You are NOT PERMITTED to use the code as-is  for commenrcial purposes 
+// (i.e. to sell and claim as your own)
+// If you wish to make major changes, or copy sections of the code, 
+// please credit me in your comments. It would mean a lot to me. Thank you.
 // Eclectic App Development - May 2014
 
 import com.badlogic.gdx.*;
