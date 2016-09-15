@@ -1,11 +1,11 @@
 package com.eclecticapps.soladvanced;
 
 // @Author Matthew Tiernan
-// @From Eclectic App Development
+// @Company Eclectic App Development
 // @Web http://eclecticappdevelopment.co.uk
 // @Date May 2014
-// @License: Creative Commons Attribution-Non-Commercial
-// @LicenseLink: https://creativecommons.org/licenses/by-nc/3.0/
+// @License Creative Commons Attribution-Non-Commercial
+// @LicenseLink https://creativecommons.org/licenses/by-nc/3.0/
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
